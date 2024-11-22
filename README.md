@@ -12,4 +12,5 @@ I’ve built a e-commerce platform designed to provide a smooth and intuitive ex
   Frontend: HTML, CSS,Bootstrap and JavaScript for an engaging and interactive user experience.
   Database: sqlite3 for reliable data storage and management.
   Payment Gateway: Integrated with Stripe for secure transactions.
-![Untitled](https://github.com/user-attachments/assets/69677410-bf4b-4642-b735-d6489b14a48d)
+![Untitled](https://github.com/user-attachments/assets/6a758288-3945-4879-90bb-9a15171d3282)
+
