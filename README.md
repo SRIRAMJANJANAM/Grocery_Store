@@ -11,6 +11,7 @@ I’ve built a e-commerce platform designed to provide a smooth and intuitive ex
   Backend: Django with REST API for smooth and scalable operations.
   Frontend: HTML, CSS,Bootstrap and JavaScript for an engaging and interactive user experience.
   Database: sqlite3 for reliable data storage and management.
-  Payment Gateway: Integrated with Stripe for secure transactions.
-![Untitled](https://github.com/user-attachments/assets/6a758288-3945-4879-90bb-9a15171d3282)
+  Payment Gateway: Integrated with Stripe for secure transactions
+  ![Untitled](https://github.com/user-attachments/assets/64bfb2af-b4a3-46ee-9f3d-30c858adefaa)
+
 
