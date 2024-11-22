@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+{% extends 'shop/base.html' %}
+{% block body_block %}
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Products| Grocery Store {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+<h1 id="op">Our Products</h1>
+<div id="items">
+    {% for product in products %}
+        <div class="product">
+            <img src="{% static product.image %}" alt="{{ product.name }}">
+            <h2 id="h2">{{ product.name }}</h2>
+            <p id="desc">{{ product.description }}</p>
+            {% if product.price > 100 %}
+            <h2><strong>&#8377;{{ product.price }}</strong><i><del>&#8377;{{ product.price|add:85 }}</del></i></h2>
+            {% elif product.price <= 100  %}
+            <h2><strong>&#8377;{{ product.price }}</strong> <i><del>&#8377;{{ product.price|add:25 }}</del></i></h2>
+            {% endif %}
+            <form method="post" action="/cart/" id="homeform">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <button type="submit" id="first">Add </button>
+            </form>
+            <form method="post" action="/cart/" id="homeform">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <input type="hidden" name="action" value="order_item">
+                <button type="submit">Proceed to Order</button>
+            </form>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
+</body>
+</html>

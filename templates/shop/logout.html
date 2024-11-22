@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+{% extends 'shop/base.html' %}
+{% block body_block%}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Logout | Grocery Store{% endblock %}</title>
+    <style>
+        h1{
+            color: blue;
+        }
+        p,h2{
+            color: red;
+        }
+        div{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    
+    <div><h1>Thanks for using Grocery Store</h1>
+        <p>Anyway we are feeling very sad b'z you logout/p>
+        <h2>Please login again to enjoy......</h2>
+        <a href="/accounts/login" class="btn btn-success">Login</a></div>
+    {%endblock%}
+</body>
+</html>

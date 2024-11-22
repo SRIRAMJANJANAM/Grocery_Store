@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+{% extends 'shop/base.html' %}
+{% block body_block%}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Login | Grocery Store{% endblock %}</title>
+    <style>
+        body{
+            background-color: aliceblue;
+        }
+        #login{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="login">
+        <form action="" method="post" id="loginform">
+            <h2>Please Login</h2>
+            {{form.as_p}}
+            {% csrf_token %}
+            <button>Login</button>
+        </form>
+    </div>
+    {% endblock %}
+</body>
+</html>

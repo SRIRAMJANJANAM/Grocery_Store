@@ -1,0 +1,421 @@
+body{
+    background: rgb(247, 243, 237);
+    font-size: 1.2em;
+}
+body::selection{
+    background: rgb(3, 255, 108);
+}
+.navbar{
+    position: fixed;
+    width: 100%;
+    height: 6vw;
+    z-index: 1000;
+}
+#cimg{
+    width: 1.5vw;
+    border-radius: 50%;
+    margin-top: -0.5vw;
+}
+#items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    width: 70%;
+    margin: auto;
+    margin-top: 4vw;
+}
+.product {
+    border: 1px solid #ccc;
+    padding: 2vw;
+    width: 17vw;
+    height: 24vw;
+    text-align: center;
+    margin: 1vw;
+    border-radius: 1vw;
+    background: rgb(245, 240, 240);
+}
+.product:hover{
+    background-color: white;
+}
+.product img {
+    max-width: 80%;
+    height: 40%;
+    border-radius: 1vw;
+}
+#add {
+    margin-top: 0.2vw;
+    padding: 0.2vw;
+    cursor: pointer;
+    border-radius: 0.3vw;
+    border: 0.1vw solid red;
+    background-color: white;
+    width: 80%;
+    color: red;
+    height: 2.3vw;
+    font-size: 1vw;
+}
+input:focus{
+    border: none;
+    outline: none;
+}
+button:focus{
+    border: none;
+    outline: none;
+}
+#add:hover{
+    background-color: red;
+    color: white;
+}
+i{
+    font-size: 1.1vw;
+}
+h2 strong{
+    font-size: 1.6vw;
+}
+#h2{
+    font-size: 1.5vw;
+}
+#desc{
+    height: 0.2vw;
+}
+li form button{
+    background-color: #343a40;
+    border: none;
+    color: white;
+    margin-top: 0.55vw;
+    margin-left: 0.5vw;
+}
+#homeform button{
+    background-color: #fafafa;
+    border: 0.12vw solid green;
+    color: green;
+    margin-top: 0.55vw;
+    margin-left: 0.5vw;
+    border-radius: 0.3vw;
+    padding: 0.2vw;
+    width: 12vw;
+    height: 2.3vw;
+}
+#homeform #first{
+    width: 12vw;
+    background-color: white;
+    color: red;
+    border: 0.12vw solid red;
+    font-weight: 600;
+}
+#homeform #first:hover{
+    background-color: red;
+    color: white;
+}
+#homeform button:hover{
+    background-color: green;
+    color: white;
+    font-weight: bolder;
+}
+#signup{
+    text-align: center;
+    background-color: black;
+    width: 60%;
+    margin: auto;
+    border-radius: 0.3vw ;
+}
+#signup label{
+    display: flex;
+    justify-content: center;
+    font-size: 2vw;
+    color: white;
+    margin-top: 2VW;
+}
+#signup form{
+    margin-top: 2vw;
+    width: 100%;
+}
+#signupform h1{
+    color: rgb(3, 213, 255);
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 3vw;
+}
+#signup input{
+    display: flex;
+    width: 60%;
+    margin-left: 14vw;
+    background-color: rgb(5, 5, 5);
+    border: none;
+    border-bottom: 0.2px solid rgb(34, 2, 241);
+    text-align: center;
+    color: gold;
+}
+#signupform button{
+    width: 9vw;
+    height: 3vw;
+    background: black;
+    color: green;
+    font-size: 1.4vw;
+    border: 0.2vw solid green;
+    border-radius: 0.4vw;
+    margin-bottom: 2vw;
+    font-weight: 600;
+    font-family: monospace;
+}
+#signupform button:hover{
+    color: white;
+    background-color: green;
+}
+#login{
+    text-align: center;
+    margin: auto;
+    margin-left: 38%;
+}
+#login form{  
+    margin-top: 90px;
+    width: 50%;
+    border-radius: 3vw ;
+    height: 25vw;
+}
+#loginform h2{
+    color: red;
+}
+#loginform label{
+    color: rgb(74, 8, 255);
+    font-size: 1.6vw;
+}
+#loginform input{
+    background: aliceblue;
+    border: none;
+    text-align: center;
+    color: rgb(255, 0, 0);
+    font-size: 1.3vw;
+    border-bottom: 0.1vw solid rgb(74, 8, 255);
+}
+#loginform button{
+    background-color: aliceblue;
+    font-size: 1.9vw;
+    border: 0.1vw solid grey;
+    width: 12vw;
+    color: green;
+    font-family: monospace;
+    border-radius: 2vw;
+}
+#loginform button:hover{
+    background-color: green;
+    color: aliceblue;
+}
+#emptymain{
+   text-align: center;
+   margin-top: 15vw;
+   margin-left: 35vw;
+}
+#emptymain h1{
+    font-size: 2vw;
+    font-weight: 800;
+}
+#emptymain h2{
+    font-size: 1.8vw;
+    font-weight: 400;
+}
+#cartitems{
+    width: 60%;
+    margin-top: 4vw;
+    margin-left: 2vw;
+}
+#cartitem{
+    border: 1px solid green;
+    padding: 4vw;
+    margin: 2vw 2vw 2vw 2vw;
+    border-radius: 3vw;
+}
+#cartitem img{
+    width: 25%;
+    height: 100px;
+    display: inline-block;
+    border-radius: 0.4vw;
+}
+#cartitem pre{
+    margin-top: -7vw;
+    color: rgb(11, 11, 22);
+    font-size: 1.6vw;
+}
+#pqua{
+    color: red;
+    font-size: 1.6vw;
+    width: 2vw;
+}
+#pto{
+    color: black;
+}
+#hmq{
+    margin-left: 38vw;
+}
+#hprice{
+    margin-left: 39vw;
+}
+#hmq button{
+    border-radius: 50%;
+    width: 2.5vw;
+    height: 2.5vw;
+    border: 0.1vw solid grey;
+    color: green;
+    font-weight: bolder;
+    font-size: 1.5vw;
+    background-color: rgb(247, 243, 237);
+    margin-top: 0.4vw;
+}
+#hmq button:hover{
+    border: 0.1vw solid blue;
+}
+#cartorder{
+    margin-left: 36.5vw;
+}
+#cartorder{
+    margin-top: 1vw;
+    background: rgb(247, 243, 237);
+    border-radius: 2vw;
+    border: 0.1vw solid grey;
+    color:  green;
+    padding: 0.2vw;
+    width: 10vw;
+    font-weight: 700;
+}
+#cartorder:hover{
+    color: aliceblue;
+    background-color: green;
+}
+#cartdel{
+    color: black;
+    font-size: 1.4vw;
+    font-weight: 200;
+}
+#custmdetails {
+    width: 40vw;
+    margin: 0 auto;
+    padding: 2vw;
+    border: 1px solid #ccc;
+    border-radius: 2vw;
+    background-color: #f9f9f9;
+    margin-top: -17vw;
+}
+#custmdetails label {
+    display: block;
+    margin-bottom: 0.5vw;
+    font-weight: bold;
+}
+
+#custmdetails input {
+    width: 100%;
+    padding: 0.52vw;
+    margin-bottom: 0.51vw;
+    border: 1px solid #ccc;
+    border-radius: 1vw;
+    box-sizing: border-box;
+    font-size: 1.5vw;
+}
+#custmdetails button {
+    width: 100%;
+    padding: 1vw;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 1vw;
+    cursor: pointer;
+}
+#custmdetails button:hover {
+    background-color: #45a049;
+}
+#success{
+    text-align: center;
+    margin-top: 14vw;
+}
+#success h1{
+    color: green;
+    font-weight: 900;
+    font-size: 2.9vw;
+}
+#success p{
+    color: rgba(255, 0, 0, 0.889);
+    font-weight: 900;
+    font-size: 1.9vw;
+}
+#success a{
+    text-decoration: none;
+}
+#custom-search{
+    
+    width: 40vw;
+}
+.carousel{
+    width: 75%;
+    margin: auto;
+    margin-top: 2vw;
+    
+}
+.carousel-item img{
+    border-radius: 0.9vw;
+    height: 22VW;
+}
+#mainitems{
+    display: flex;
+    gap: 2vw;
+    text-align: center;
+    width: 90%;
+    margin: auto;
+    margin-top: 2vw;
+    margin-bottom: 5vw;
+}
+#subitems{
+    width: 19%;
+    height: 22vw;
+    background: white;
+    padding: 1vw;
+    border: 0.1vw solid gray;
+    border-radius: 0.6vw;
+}
+#subitems:hover{
+    background-color: aliceblue;
+}
+a:hover{
+    text-decoration: none;
+}
+#sub img{
+    width: 10vw;
+    height: 10vw;
+    border-radius: 0.9vw;
+}
+#sub h4{
+    color: black;
+}
+#sub strong{
+    color: green;
+    font-size: 1.4vw;
+}
+#banner{
+    width: 80%;
+    margin: auto;
+    margin-bottom: 4vw;
+}
+#banner img{
+    width: 100%;
+    border-radius: 0.9vw;
+}
+footer{
+    background: black;
+    height: 8vw;
+}
+footer #contact{
+    color: white;
+    text-align: center;
+}
+footer div{
+    color:  red;
+    text-align: center;
+}
+#show{
+    display: inline-block;
+    background: black;
+    padding: 2vw;
+    color: gold;
+    border-radius: 0.96vw;
+    margin-left: 1vw;
+}
+#show h1{
+    font-size: 2.3vw;
+}

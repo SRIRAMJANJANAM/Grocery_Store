@@ -1,0 +1,56 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block body_block %}
+<html lang="en">
+<head>
+    <title>{% block title %}Oredr Product | Grocery Store{% endblock %}</title>
+</head>
+<body>
+    <h1>Order Product</h1>
+    <div id="show">
+        <h1>Product:{{ product.name }}</h1>
+        <h1>Quantity:{{ cart_item.quantity }}</h1>
+        <h1>Total:{{ total }}</h1>
+    </div>
+    <div id="custmdetails">
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="item" value="{{ product.name }}">
+            <input type="hidden" name="price" value="{{ product.price }}">
+            <input type="hidden" name="quantity" value="{{ cart_item.quantity }}">
+            <input type="hidden" name="totalprice" value="{{ total }}">
+            <label for="cname">Name:</label>
+            <input type="text" name="cname" id="cname" required placeholder="Enter Full Name" autofocus> <br>
+        
+        
+            <label for="phno">Phone Number:</label>
+            <input type="text" name="phno" id="phno" required min="10" placeholder="Phone Number"><br>
+        
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" required placeholder="grocery@gmail.com"><br>
+    
+            <label for="houseno">HouseNo:</label>
+            <input type="text" name="houseno" id="houseno" required placeholder="House No, Building Name"><br>
+    
+            <label for="roadno">Road No:</label>
+            <input type="text" name="roadno" id="roadno" required placeholder="Road No, Area, Colony"><br>
+        
+            <label for="address">Address:</label>
+            <input type="text" name="address" id="address" required placeholder="Address"><br>
+        
+            <label for="pin">PIN Code:</label>
+            <input type="text" name="pin" id="pin" required max="6" placeholder="Pincode"><br>
+        
+            <label for="state">State:</label>
+            <input type="text" name="state" id="state" required placeholder="State"><br>
+        
+            <label for="country">Country:</label>
+            <input type="text" name="country" id="country" value="India" readonly><br>
+        
+            <a href="/checkout"> <button type="submit">Place Order</button></a>
+        </form>
+    </div>
+    
+</body>
+</html>
+{% endblock %}

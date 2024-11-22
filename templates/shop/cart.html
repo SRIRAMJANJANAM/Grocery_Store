@@ -1,0 +1,55 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block body_block %}
+<html lang="en">
+<head>
+    <title>{% block title %}Cart | Grocery Store{% endblock %}</title>
+</head>
+<body>
+    <h1>Your Cart</h1>
+<div id="cartitems">
+        {% if cart.cartitem_set.all %}
+        {% for item in cart.cartitem_set.all %}
+            <div id="cartitem">
+                <img src="{% static item.product.image %}" alt="{{ item.product.name }}">
+                <pre>
+                    <strong>{{ item.product.name }}</strong>
+                    <strong>{{item.product.description}}</strong>
+                    <strong id="pto">Price:₹{{ item.get_total }}{% if item.product.price > 100 %}   <del id="cartdel">&#8377;{{ item.get_total|add:85 }}</del>{% elif item.product.price <= 100  %} <del id="cartdel">&#8377;{{ item.get_total|add:45 }}</del>{% endif %}</strong>
+                </pre>
+                <strong id="hprice"> &#8377;{{ item.get_total }}</strong>
+
+                <!-- Increment button -->
+                <div id="hmq">
+                    <form method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                        <input type="hidden" name="action" value="add">
+                        <button type="submit">+</button>
+                    </form>
+                    <strong id="pqua">{{ item.quantity }}</strong>
+                    <!-- Decrement button -->
+                    <form method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                        <input type="hidden" name="action" value="remove">
+                        <button type="submit">&#x2212;</button>
+                    </form>
+                </div>
+                <form method="get" action="{% url 'order_product' item.product.id %}" style="display: inline;">
+                    <button type="submit" id="cartorder">Order Now</button>
+                </form>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div id="emptymain">
+                <h1>Your cart is Empty!</h1>
+            <h2 ><a href="/home"title='Continue Shopping'>Continue Shopping</a> </h2>
+            </div>
+            
+            {% endif %}
+        
+        </div>
+</body>
+</html>
+{% endblock %}
