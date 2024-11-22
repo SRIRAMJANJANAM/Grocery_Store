@@ -7,8 +7,9 @@ Duration:OCT TO DEC 2024
 Project:E-Commerce Platform for Seamless Product Ordering
 **Ojective**
 I’ve built a e-commerce platform designed to provide a smooth and intuitive experience for customers to browse, order, and purchase products online
-_Technologies Used:_
+**_Technologies Used:_**
   Backend: Django with REST API for smooth and scalable operations.
   Frontend: HTML, CSS,Bootstrap and JavaScript for an engaging and interactive user experience.
-  Database: PostgreSQL for reliable data storage and management.
+  Database: sqlite3 for reliable data storage and management.
   Payment Gateway: Integrated with Stripe for secure transactions.
+![Untitled](https://github.com/user-attachments/assets/69677410-bf4b-4642-b735-d6489b14a48d)
