@@ -1,12 +1,8 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import *
-import stripe
+
 from django.conf import settings
-
-stripe.api_key = settings.STRIPE_SECRET_KEY
-
-
 def base_view(request):
     search_query = request.GET.get('search', '')
     if search_query:
@@ -15,8 +11,6 @@ def base_view(request):
         products = Product.objects.all()
     return render(request,'shop/base.html')
 
-
-
 def home(request):
     search_query = request.GET.get('search', '')
     if search_query:
@@ -24,9 +18,6 @@ def home(request):
     else:
         products = Product.objects.all()
     return render(request, 'shop/home.html', {'products': products})
-
-stripe.api_key = settings.STRIPE_SECRET_KEY
-
 
 @login_required
 def cart(request):
@@ -54,7 +45,6 @@ def cart(request):
 
     return render(request, 'shop/cart.html', {'cart': cart})
 
-@login_required
 @login_required
 def order_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -96,7 +86,6 @@ def order_product(request, product_id):
         'cart_total': total_cart_value,  # Add cart total to context
     })
 
-
 @login_required
 def checkout(request):
     cart = Cart.objects.get(user=request.user)
@@ -113,10 +102,8 @@ def checkout(request):
     
     return render(request, 'shop/checkout.html', {'total': total})
 
-
 def logout_view(request):
     return render(request,'shop/logout.html')
-
 
 from shop.forms import SignUpForm
 from django.http import HttpResponseRedirect
@@ -141,7 +128,6 @@ def signup_view(request):
             messages.error(request, "Please correct the errors below.")
 
     return render(request, 'shop/signup.html', {'form': form})
-
 
 def success_view(request):
     return render(request,'shop/success.html')

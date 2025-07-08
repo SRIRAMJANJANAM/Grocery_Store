@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-=zyxekxs*87u2tmiwj#x(l&!5dh$yfhov54z$0ebvqj&12#*vg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -81,6 +81,16 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'grocery',
+#         'USER': 'root',
+#         'PASSWORD': '130423',
+#     }
+# }
 
 
 # Password validation

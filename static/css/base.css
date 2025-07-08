@@ -1,6 +1,7 @@
 body{
     background: rgb(247, 243, 237);
-    font-size: 1.2em;
+    font-size: 1.1vw;
+  
 }
 body::selection{
     background: rgb(3, 255, 108);
@@ -11,10 +12,15 @@ body::selection{
     height: 6vw;
     z-index: 1000;
 }
+
 #cimg{
     width: 1.5vw;
     border-radius: 50%;
     margin-top: -0.5vw;
+}
+.form-inline button{
+    width: 10%;
+    font-size: 1.1vw;
 }
 #items {
     display: flex;
@@ -28,7 +34,7 @@ body::selection{
     border: 1px solid #ccc;
     padding: 2vw;
     width: 17vw;
-    height: 24vw;
+    
     text-align: center;
     margin: 1vw;
     border-radius: 1vw;
@@ -37,10 +43,19 @@ body::selection{
 .product:hover{
     background-color: white;
 }
+#nav a{
+    font-size: 1.5vw;
+}
 .product img {
     max-width: 80%;
     height: 40%;
     border-radius: 1vw;
+}
+#pod{
+    font-size: 1vw;
+}
+.product #desc{
+    font-size: 1vw;
 }
 #add {
     margin-top: 0.2vw;
@@ -77,6 +92,7 @@ h2 strong{
 }
 #desc{
     height: 0.2vw;
+    font-size: 0.5vw;
 }
 li form button{
     background-color: #343a40;
@@ -102,6 +118,7 @@ li form button{
     color: red;
     border: 0.12vw solid red;
     font-weight: 600;
+    font-size: 1vw;
 }
 #homeform #first:hover{
     background-color: red;
@@ -339,7 +356,6 @@ li form button{
     text-decoration: none;
 }
 #custom-search{
-    
     width: 40vw;
 }
 .carousel{
@@ -363,7 +379,7 @@ li form button{
 }
 #subitems{
     width: 19%;
-    height: 22vw;
+    
     background: white;
     padding: 1vw;
     border: 0.1vw solid gray;
@@ -382,10 +398,11 @@ a:hover{
 }
 #sub h4{
     color: black;
+    font-size: 1.6vw;
 }
 #sub strong{
     color: green;
-    font-size: 1.4vw;
+    font-size: 1.3vw;
 }
 #banner{
     width: 80%;

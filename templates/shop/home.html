@@ -31,7 +31,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="product_id" value="{{ product.id }}">
                 <input type="hidden" name="action" value="order_item">
-                <button type="submit">Proceed to Order</button>
+                <button type="submit" id="pod">Proceed to Order</button>
             </form>
         </div>
     {% endfor %}
