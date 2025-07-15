@@ -13,5 +13,5 @@ class ProductAdmin(admin.ModelAdmin):
 admin.site.register(Product,ProductAdmin)
 
 
-
+admin.site.register(NavigationLog)
 

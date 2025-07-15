@@ -67,3 +67,21 @@ class OrderItem(models.Model):
 
 
 
+
+
+
+
+
+
+class NavigationLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Filter logs by user
+    date = models.DateField()
+    time = models.TimeField()
+    method = models.CharField(max_length=10)
+    url = models.URLField()
+    action = models.CharField(max_length=255)
+    status_code = models.PositiveIntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} | {self.action} at {self.time}"
+

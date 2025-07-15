@@ -131,3 +131,41 @@ def signup_view(request):
 
 def success_view(request):
     return render(request,'shop/success.html')
+
+
+
+
+
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from django.utils.dateparse import parse_date
+from .models import NavigationLog
+
+def navi_view(request):
+    logs = NavigationLog.objects.filter(user=request.user).order_by('-date', '-time')
+
+    date_filter = request.GET.get('date')
+    if date_filter:
+        date_obj = parse_date(date_filter)
+        if date_obj:
+            logs = logs.filter(date=date_obj)
+
+    try:
+        per_page = int(request.GET.get('per_page', 25))
+        if per_page <= 0:
+            per_page = 25
+    except (ValueError, TypeError):
+        per_page = 25
+
+    paginator = Paginator(logs, per_page)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    per_page_options = [10, 20, 25, 50, 100]
+
+    return render(request, 'shop/nav.html', {
+        'page_obj': page_obj,
+        'date_filter': date_filter,
+        'per_page': per_page,
+        'per_page_options': per_page_options,
+    })

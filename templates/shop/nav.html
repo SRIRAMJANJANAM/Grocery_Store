@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Navigation Logs</title>
+    <style>
+        body{
+            background-color: black;
+            color: white;
+        }
+       form{
+        margin-left: 34%;
+        margin-bottom: 2vw;
+       }
+       h2{
+        margin-left: 40%;
+       }
+    </style>
+</head>
+<body>
+
+<h2>Your Navigation Logs</h2>
+
+<form method="get" action=".">
+    <label for="date">Filter by Date:</label>
+    <input type="date" id="date" name="date" value="{{ date_filter|default:'' }}">
+
+    <label for="per_page">Entries per page:</label>
+    <select id="per_page" name="per_page" onchange="this.form.submit()">
+        {% for option in per_page_options %}
+            <option value="{{ option }}" {% if per_page == option %}selected{% endif %}>{{ option }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Filter</button>
+
+    {% if date_filter %}
+        <a href="{% url 'logs' %}">Clear filter</a>
+    {% endif %}
+</form>
+
+<table border="1" cellspacing="0" cellpadding="5" align="center">
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Status</th>
+            <th>URL</th>
+            <th>Time</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in page_obj %}
+        
+            <tr>
+                <td>{{ log.method }}</td>
+                <td>{{ log.status_code }}</td>
+                <td>{{ log.url }}</td>
+                <td>{{ log.time }}</td>
+                <td>{{log.date}}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6">No logs found.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pagination -->
+<div style="margin-top: 20px;">
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
+    <div style="margin-top: 5px;">
+        {% if page_obj.has_previous %}
+            <a href="?{% if date_filter %}date={{ date_filter }}&{% endif %}per_page={{ per_page }}&page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+                <strong>{{ num }}</strong>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?{% if date_filter %}date={{ date_filter }}&{% endif %}per_page={{ per_page }}&page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?{% if date_filter %}date={{ date_filter }}&{% endif %}per_page={{ per_page }}&page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>
