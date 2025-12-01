@@ -78,7 +78,7 @@ class NavigationLog(models.Model):
     date = models.DateField()
     time = models.TimeField()
     method = models.CharField(max_length=10)
-    url = models.URLField()
+    url = models.CharField(max_length=500)
     action = models.CharField(max_length=255)
     status_code = models.PositiveIntegerField(null=True, blank=True)
 

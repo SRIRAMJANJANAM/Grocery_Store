@@ -2,91 +2,443 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Navigation Logs</title>
     <style>
-        body{
-            background-color: black;
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .filters {
+            background: var(--dark-light);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Fixed select styling for dark background */
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Fix dropdown options background */
+        select option {
+            background-color: var(--dark-light);
+            color: var(--text);
+            padding: 12px;
+        }
+
+        /* For Firefox */
+        select option:checked {
+            background-color: var(--primary);
             color: white;
         }
-       form{
-        margin-left: 34%;
-        margin-bottom: 2vw;
-       }
-       h2{
-        margin-left: 40%;
-       }
+
+        /* For Webkit browsers (Chrome, Safari, Edge) */
+        select:focus option:checked {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.95rem;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+        }
+
+        .clear-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 12px 15px;
+            transition: color 0.2s;
+        }
+
+        .clear-link:hover {
+            color: var(--primary);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            background: var(--dark-light);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .method {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .method-get { background: #10b98115; color: #10b981; }
+        .method-post { background: #3b82f615; color: #3b82f6; }
+        .method-put { background: #f59e0b15; color: #f59e0b; }
+        .method-delete { background: #ef444415; color: #ef4444; }
+
+        .status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-2xx { background: #10b98115; color: #10b981; }
+        .status-3xx { background: #3b82f615; color: #3b82f6; }
+        .status-4xx { background: #f59e0b15; color: #f59e0b; }
+        .status-5xx { background: #ef444415; color: #ef4444; }
+
+        .url {
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            background: var(--dark-light);
+            border-radius: 10px;
+        }
+
+        .page-info {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .page-links {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .page-link {
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .page-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .page-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .filter-group {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .button-group {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+            
+            th, td {
+                padding: 12px 15px;
+            }
+            
+            .pagination {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .filters {
+                padding: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .page-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <h1>Navigation Logs</h1>
+        </header>
 
-<h2>Your Navigation Logs</h2>
+        <form method="get" action="." class="filters">
+            <div class="filter-group">
+                <label for="date">Filter by Date</label>
+                <input type="date" id="date" name="date" value="{{ date_filter|default:'' }}">
+            </div>
+            
+            <div class="filter-group">
+                <label for="per_page">Entries per page</label>
+                <select id="per_page" name="per_page" onchange="this.form.submit()">
+                    {% for option in per_page_options %}
+                        <option value="{{ option }}" {% if per_page == option %}selected{% endif %}>{{ option }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit">Filter</button>
+                
+                {% if date_filter %}
+                    <a href="{% url 'logs' %}" class="clear-link">Clear filter</a>
+                {% endif %}
+            </div>
+        </form>
 
-<form method="get" action=".">
-    <label for="date">Filter by Date:</label>
-    <input type="date" id="date" name="date" value="{{ date_filter|default:'' }}">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>URL</th>
+                        <th>Time</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in page_obj %}
+                        <tr>
+                            <td>
+                                {% if log.method == 'GET' %}
+                                    <span class="method method-get">{{ log.method }}</span>
+                                {% elif log.method == 'POST' %}
+                                    <span class="method method-post">{{ log.method }}</span>
+                                {% elif log.method == 'PUT' %}
+                                    <span class="method method-put">{{ log.method }}</span>
+                                {% elif log.method == 'DELETE' %}
+                                    <span class="method method-delete">{{ log.method }}</span>
+                                {% else %}
+                                    <span class="method">{{ log.method }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if log.status_code >= 200 and log.status_code < 300 %}
+                                    <span class="status status-2xx">{{ log.status_code }}</span>
+                                {% elif log.status_code >= 300 and log.status_code < 400 %}
+                                    <span class="status status-3xx">{{ log.status_code }}</span>
+                                {% elif log.status_code >= 400 and log.status_code < 500 %}
+                                    <span class="status status-4xx">{{ log.status_code }}</span>
+                                {% else %}
+                                    <span class="status status-5xx">{{ log.status_code }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="url">{{ log.url }}</td>
+                            <td>{{ log.time }}</td>
+                            <td>{{ log.date }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="no-data">No logs found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    <label for="per_page">Entries per page:</label>
-    <select id="per_page" name="per_page" onchange="this.form.submit()">
-        {% for option in per_page_options %}
-            <option value="{{ option }}" {% if per_page == option %}selected{% endif %}>{{ option }}</option>
-        {% endfor %}
-    </select>
+        <div class="pagination">
+            <div class="page-info">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </div>
+            
+            <div class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="?{% if date_filter %}date={{ date_filter }}&{% endif %}per_page={{ per_page }}&page={{ page_obj.previous_page_number }}" class="page-link">Previous</a>
+                {% endif %}
 
-    <button type="submit">Filter</button>
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                        <span class="page-link active">{{ num }}</span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a href="?{% if date_filter %}date={{ date_filter }}&{% endif %}per_page={{ per_page }}&page={{ num }}" class="page-link">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
 
-    {% if date_filter %}
-        <a href="{% url 'logs' %}">Clear filter</a>
-    {% endif %}
-</form>
-
-<table border="1" cellspacing="0" cellpadding="5" align="center">
-    <thead>
-        <tr>
-            <th>Method</th>
-            <th>Status</th>
-            <th>URL</th>
-            <th>Time</th>
-            <th>Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for log in page_obj %}
-        
-            <tr>
-                <td>{{ log.method }}</td>
-                <td>{{ log.status_code }}</td>
-                <td>{{ log.url }}</td>
-                <td>{{ log.time }}</td>
-                <td>{{log.date}}</td>
-            </tr>
-        {% empty %}
-            <tr><td colspan="6">No logs found.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<!-- Pagination -->
-<div style="margin-top: 20px;">
-    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.</span>
-    <div style="margin-top: 5px;">
-        {% if page_obj.has_previous %}
-            <a href="?{% if date_filter %}date={{ date_filter }}&{% endif %}per_page={{ per_page }}&page={{ page_obj.previous_page_number }}">Previous</a>
-        {% endif %}
-
-        {% for num in page_obj.paginator.page_range %}
-            {% if num == page_obj.number %}
-                <strong>{{ num }}</strong>
-            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                <a href="?{% if date_filter %}date={{ date_filter }}&{% endif %}per_page={{ per_page }}&page={{ num }}">{{ num }}</a>
-            {% endif %}
-        {% endfor %}
-
-        {% if page_obj.has_next %}
-            <a href="?{% if date_filter %}date={{ date_filter }}&{% endif %}per_page={{ per_page }}&page={{ page_obj.next_page_number }}">Next</a>
-        {% endif %}
+                {% if page_obj.has_next %}
+                    <a href="?{% if date_filter %}date={{ date_filter }}&{% endif %}per_page={{ per_page }}&page={{ page_obj.next_page_number }}" class="page-link">Next</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
-</div>
-
 </body>
 </html>

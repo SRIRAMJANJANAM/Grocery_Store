@@ -141,6 +141,9 @@ from django.shortcuts import render
 from django.utils.dateparse import parse_date
 from .models import NavigationLog
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def navi_view(request):
     logs = NavigationLog.objects.filter(user=request.user).order_by('-date', '-time')
 
@@ -169,3 +172,4 @@ def navi_view(request):
         'per_page': per_page,
         'per_page_options': per_page_options,
     })
+
