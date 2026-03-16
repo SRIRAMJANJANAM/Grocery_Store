@@ -6,10 +6,11 @@ class NavigationLogMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+
         response = self.get_response(request)
 
-        if request.user.is_authenticated:
-            try:
+        try:
+            if hasattr(request, "user") and request.user.is_authenticated:
                 NavigationLog.objects.create(
                     user=request.user,
                     date=datetime.now().date(),
@@ -19,7 +20,7 @@ class NavigationLogMiddleware:
                     action=f"{request.method} {request.path}",
                     status_code=response.status_code,
                 )
-            except Exception as e:
-                print("Logging error:", e)
+        except Exception as e:
+            print("Logging error:", e)
 
         return response
