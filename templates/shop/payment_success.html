@@ -1,0 +1,208 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Payment Successful | FreshMart Grocery{% endblock %}
+
+{% block body_block %}
+<style>
+    .success-container {
+        max-width: 600px;
+        margin: 3rem auto;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .success-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        padding: 3rem 2rem;
+    }
+    
+    .success-icon {
+        width: 100px;
+        height: 100px;
+        background: #2ecc71;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        margin: 0 auto 2rem;
+        animation: scaleIn 0.5s ease;
+    }
+    
+    @keyframes scaleIn {
+        0% {
+            transform: scale(0);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+    
+    .success-title {
+        font-size: 2rem;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    
+    .success-message {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .order-details {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        text-align: left;
+    }
+    
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .detail-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+    
+    .detail-label {
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .detail-value {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .order-id {
+        background: #e8f6ef;
+        color: #27ae60;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        display: inline-block;
+        font-weight: 600;
+        margin: 1rem 0;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background: #2ecc71;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #27ae60;
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline {
+        border: 2px solid #2ecc71;
+        color: #2ecc71;
+    }
+    
+    .btn-outline:hover {
+        background: #2ecc71;
+        color: white;
+    }
+</style>
+
+<div class="container">
+    <div class="success-container">
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            
+            <h1 class="success-title">Payment Successful!</h1>
+            <p class="success-message">Thank you for your order. Your payment has been processed successfully.</p>
+            
+            <div class="order-id">
+                <i class="fas fa-hashtag me-2"></i>Order ID: #{{ order.id }}
+            </div>
+            
+            <div class="order-details">
+                <h4 class="mb-3">Order Details</h4>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Customer Name:</span>
+                    <span class="detail-value">{{ order.customer.cname }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">{{ order.customer.email }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Phone:</span>
+                    <span class="detail-value">{{ order.customer.phno }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Delivery Address:</span>
+                    <span class="detail-value">
+                        {{ order.customer.houseno }}, {{ order.customer.roadno }}<br>
+                        {{ order.customer.address }}<br>
+                        {{ order.customer.pin }}, {{ order.customer.state }}<br>
+                        {{ order.customer.country }}
+                    </span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Order Date:</span>
+                    <span class="detail-value">{{ order.order_date|date:"d M Y, h:i A" }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Payment Status:</span>
+                    <span class="detail-value text-success">{{ order.status }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Total Amount:</span>
+                    <span class="detail-value" style="color: #2ecc71; font-size: 1.2rem;">₹{{ order.total_amount }}</span>
+                </div>
+            </div>
+            
+            <p class="mt-3 text-muted">
+                <i class="fas fa-envelope me-2"></i>
+                A confirmation email has been sent to {{ order.customer.email }}
+            </p>
+            
+            <div class="action-buttons">
+                <a href="{% url 'home' %}" class="btn btn-primary">
+                    <i class="fas fa-shopping-cart me-2"></i>Continue Shopping
+                </a>
+                <a href="#" class="btn btn-outline" onclick="window.print()">
+                    <i class="fas fa-print me-2"></i>Print Receipt
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

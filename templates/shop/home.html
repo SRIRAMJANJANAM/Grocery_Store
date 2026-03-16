@@ -1,41 +1,525 @@
-<!DOCTYPE html>
 {% extends 'shop/base.html' %}
-{% block body_block %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Products| Grocery Store {% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-</head>
-<body>
-<h1 id="op">Our Products</h1>
-<div id="items">
-    {% for product in products %}
-        <div class="product">
-            <img src="{% static product.image %}" alt="{{ product.name }}">
-            <h2 id="h2">{{ product.name }}</h2>
-            <p id="desc">{{ product.description }}</p>
-            {% if product.price > 100 %}
-            <h2><strong>&#8377;{{ product.price }}</strong><i><del>&#8377;{{ product.price|add:85 }}</del></i></h2>
-            {% elif product.price <= 100  %}
-            <h2><strong>&#8377;{{ product.price }}</strong> <i><del>&#8377;{{ product.price|add:25 }}</del></i></h2>
-            {% endif %}
-            <form method="post" action="/cart/" id="homeform">
-                {% csrf_token %}
-                <input type="hidden" name="product_id" value="{{ product.id }}">
-                <button type="submit" id="first">Add </button>
-            </form>
-            <form method="post" action="/cart/" id="homeform">
-                {% csrf_token %}
-                <input type="hidden" name="product_id" value="{{ product.id }}">
-                <input type="hidden" name="action" value="order_item">
-                <button type="submit" id="pod">Proceed to Order</button>
-            </form>
+{% block title %}Products | FreshMart Grocery{% endblock %}
+
+{% block body_block %}
+<style>
+    :root {
+        --primary: #2ecc71;
+        --primary-dark: #27ae60;
+        --secondary: #3498db;
+        --light: #f8f9fa;
+        --dark: #2c3e50;
+        --gray: #95a5a6;
+        --danger: #e74c3c;
+        --warning: #f39c12;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --radius: 12px;
+    }
+
+    .products-header {
+        background: linear-gradient(135deg, var(--dark) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .products-header h1 {
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .products-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .products-container {
+        padding: 2rem 0 4rem;
+    }
+
+    /* Product Grid */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: var(--radius);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .product-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: var(--primary);
+        color: white;
+        padding: 0.25rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+
+    .product-image {
+        height: 220px;
+        width: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .product-card:hover .product-image {
+        transform: scale(1.05);
+    }
+
+    .product-content {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-title {
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1.3;
+    }
+
+    .product-description {
+        color: var(--gray);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        flex-grow: 1;
+    }
+
+    .product-price {
+        margin: 1rem 0;
+    }
+
+    .current-price {
+        color: var(--primary);
+        font-weight: 800;
+        font-size: 1.5rem;
+        display: block;
+        margin-bottom: 0.25rem;
+        
+    }
+
+    .original-price {
+        color: var(--gray);
+        font-size: 1rem;
+        margin-left: 0.5rem;
+
+    }
+
+    .discount-badge {
+        display: inline-block;
+        background: var(--warning);
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+
+    .product-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: auto;
+    }
+
+    .btn-add-cart {
+        flex: 1;
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-add-cart:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+    }
+
+    .btn-order-now {
+        flex: 1;
+        background: var(--dark);
+        color: white;
+        border: none;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-order-now:hover {
+        background: #1a252f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+    }
+
+    /* Empty State */
+    .empty-products {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-products i {
+        font-size: 4rem;
+        color: var(--gray);
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-products h3 {
+        color: var(--dark);
+        margin-bottom: 1rem;
+    }
+
+    .empty-products p {
+        color: var(--gray);
+        max-width: 500px;
+        margin: 0 auto 2rem;
+    }
+
+    /* Product Stats */
+    .product-stats {
+        background: var(--light);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .stat-text {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-value {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--dark);
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--gray);
+    }
+
+    /* Filters */
+    .products-filters {
+        background: white;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow);
+    }
+
+    .filter-title {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .filter-btn {
+        padding: 0.5rem 1.25rem;
+        border: 2px solid #e9ecef;
+        background: white;
+        border-radius: 25px;
+        font-weight: 500;
+        color: var(--dark);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .products-header h1 {
+            font-size: 2rem;
+        }
+        
+        .products-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .product-stats {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .product-actions {
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .products-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .products-header {
+            padding: 2rem 0;
+        }
+        
+        .products-header h1 {
+            font-size: 1.75rem;
+        }
+        
+        .filter-options {
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- Products Header -->
+<section class="products-header">
+    <div class="container">
+        <h1><i class="fas fa-store me-2"></i>Our Products</h1>
+        <p>Discover fresh groceries, pantry essentials, and household items at unbeatable prices</p>
+    </div>
+</section>
+
+<div class="container">
+    <!-- Product Stats -->
+    <div class="product-stats">
+        <div class="stat-item">
+            <div class="stat-icon">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="stat-text">
+                <span class="stat-value">{{ products|length }}+</span>
+                <span class="stat-label">Products Available</span>
+            </div>
         </div>
-    {% endfor %}
+        <div class="stat-item">
+            <div class="stat-icon">
+                <i class="fas fa-shipping-fast"></i>
+            </div>
+            <div class="stat-text">
+                <span class="stat-value">Free</span>
+                <span class="stat-label">Delivery over ₹499</span>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon">
+                <i class="fas fa-tag"></i>
+            </div>
+            <div class="stat-text">
+                <span class="stat-value">Up to 40% OFF</span>
+                <span class="stat-label">Best Prices Guaranteed</span>
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <div class="stat-text">
+                <span class="stat-value">100% Fresh</span>
+                <span class="stat-label">Quality Assured</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <!-- <div class="products-filters">
+        <h3 class="filter-title"><i class="fas fa-filter me-1"></i> Filter by Category</h3>
+        <div class="filter-options">
+            <button class="filter-btn active">All Products</button>
+            <button class="filter-btn">Fruits & Vegetables</button>
+            <button class="filter-btn">Dairy & Eggs</button>
+            <button class="filter-btn">Meat & Poultry</button>
+            <button class="filter-btn">Pantry Staples</button>
+            <button class="filter-btn">Beverages</button>
+        </div>
+    </div> -->
+
+    <!-- Products Grid -->
+    <div class="products-container">
+        {% if products %}
+            <div class="products-grid">
+                {% for product in products %}
+                    <div class="product-card">
+                        {% if product.price <= 100 %}
+                            <span class="product-badge">BEST VALUE</span>
+                        {% elif product.price > 100 %}
+                            <span class="product-badge">PREMIUM</span>
+                        {% endif %}
+                        
+                        <img src="{% static product.image %}" alt="{{ product.name }}" class="product-image">
+                        
+                        <div class="product-content">
+                            <h3 class="product-title">{{ product.name }}</h3>
+                            <p class="product-description">{{ product.description|truncatechars:100 }}</p>
+                            
+                       
+                                <span class="current-price">
+                                    ₹{{ product.price }}
+                                    {% if product.price > 100 %}
+                                        <span class="original-price" style="text-decoration: line-through;">₹{{ product.price|add:85 }}</span>
+                                    {% elif product.price <= 100 %}
+                                        <span class="original-price" style="text-decoration: line-through;">₹{{ product.price|add:25 }}</span>
+                                    {% endif %}
+                                    {% if product.price > 100 %}
+                                        <span class="discount-badge">Save ₹85</span>
+                                    {% elif product.price <= 100 %}
+                                        <span class="discount-badge">Save ₹25</span>
+                                    {% endif %}
+                                </span>
+                         
+                            
+                            <div class="product-actions">
+                                <form method="post" action="/cart/" class="w-100">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                                    <button type="submit" class="btn-add-cart">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </form>
+                                
+                                <form method="post" action="/cart/" class="w-100">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                                    <input type="hidden" name="action" value="order_item">
+                                    <button type="submit" class="btn-order-now">
+                                        <i class="fas fa-bolt"></i> Buy Now
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-products">
+                <i class="fas fa-box-open"></i>
+                <h3>No Products Available</h3>
+                <p>We're currently updating our inventory. Please check back later for fresh groceries and essentials.</p>
+                <a href="/" class="btn-add-cart" style="width: auto; padding: 0.75rem 2rem;">
+                    <i class="fas fa-home me-2"></i> Return to Home
+                </a>
+            </div>
+        {% endif %}
+    </div>
 </div>
+
+<script>
+    // Add to Cart animation
+    document.querySelectorAll('.btn-add-cart').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-check"></i> Added!';
+            this.style.background = '#27ae60';
+            
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.style.background = '';
+            }, 2000);
+            
+            // Update cart count
+            const cartCount = document.querySelector('.cart-count');
+            if (cartCount) {
+                let currentCount = parseInt(cartCount.textContent) || 0;
+                cartCount.textContent = currentCount + 1;
+            }
+        });
+    });
+
+    // Filter functionality
+    document.querySelectorAll('.filter-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            this.classList.add('active');
+        });
+    });
+
+    // Product card hover effect enhancement
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.zIndex = '10';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.zIndex = '1';
+        });
+    });
+</script>
 {% endblock %}
-</body>
-</html>

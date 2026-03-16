@@ -5,7 +5,7 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    image =models.CharField(max_length=255, default='images/default.webp')
+    image = models.CharField(max_length=255, default='images/default.webp')
 
     def __str__(self):
         return self.name
@@ -17,7 +17,6 @@ class Cart(models.Model):
     def get_cart_total(self):
         return sum(item.get_total() for item in self.cartitem_set.all())
 
-
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -28,34 +27,51 @@ class CartItem(models.Model):
 
 class Customer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to User
-    item=models.CharField(max_length=250)
+    item = models.CharField(max_length=250)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    totalprice=models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    totalprice = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
     cname = models.CharField(max_length=250)
     phno = models.CharField(max_length=10)
     email = models.EmailField()
-    houseno=models.CharField(max_length=250)
-    roadno=models.CharField(max_length=250)
+    houseno = models.CharField(max_length=250)
+    roadno = models.CharField(max_length=250)
     address = models.CharField(max_length=250)
     pin = models.CharField(max_length=6)
     state = models.CharField(max_length=100)
     country = models.CharField(max_length=5, default='India')
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         return f"{self.cname} ({self.email})"
 
-
 class Order(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Payment Successful', 'Payment Successful'),
+        ('Processing', 'Processing'),
+        ('Shipped', 'Shipped'),
+        ('Out for Delivery', 'Out for Delivery'),
+        ('Delivered', 'Delivered'),
+        ('Cancelled', 'Cancelled'),
+        ('Payment Failed', 'Payment Failed'),
+    ]
+    
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    products = models.ManyToManyField(Product, through='OrderItem')  # Correct use of through model
+    products = models.ManyToManyField(Product, through='OrderItem')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     order_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=100, default='Pending')
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default='Pending')
+    
+    # Razorpay payment fields
+    razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
+    razorpay_payment_id = models.CharField(max_length=100, blank=True, null=True)
+    razorpay_signature = models.CharField(max_length=200, blank=True, null=True)
+    payment_method = models.CharField(max_length=50, blank=True, null=True)
+    payment_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"Order #{self.id} for {self.customer.cname}"
-
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -63,18 +79,10 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
     def get_total(self):
-        return self.product.price * self.quantity  # Correct calculation of total
-
-
-
-
-
-
-
-
+        return self.product.price * self.quantity
 
 class NavigationLog(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Filter logs by user
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
     date = models.DateField()
     time = models.TimeField()
     method = models.CharField(max_length=10)
@@ -84,4 +92,3 @@ class NavigationLog(models.Model):
 
     def __str__(self):
         return f"{self.user.username} | {self.action} at {self.time}"
-

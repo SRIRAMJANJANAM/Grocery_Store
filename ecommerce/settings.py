@@ -138,9 +138,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-# Stripe Configuration
-STRIPE_SECRET_KEY = "your_secret_key"
-STRIPE_PUBLISHABLE_KEY = "your_publishable_key"
+# Razorpay Configuration
+RAZORPAY_KEY_ID = 'rzp_live_SRu7Tc3XH6E9SE'  # Replace with your actual Razorpay Key ID
+RAZORPAY_KEY_SECRET = 'qaQB1KDsZBmgNVPq24UZcS5o'    # Replace with your actual Razorpay Key Secret
 
 
 LOGIN_REDIRECT_URL = '/'
@@ -154,4 +154,9 @@ PASSWORD_HASHERS = [
 'django.contrib.auth.hashers.BCryptPasswordHasher',
 'django.contrib.auth.hashers.PBKDF2PasswordHasher',
 'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+]
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://9db9-2409-4091-8055-dc15-7c52-5de0-bb96-c25.ngrok-free.app",
 ]

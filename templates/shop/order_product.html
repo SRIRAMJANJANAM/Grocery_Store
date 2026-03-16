@@ -1,68 +1,945 @@
 {% extends 'shop/base.html' %}
 {% load static %}
+{% block title %}Checkout | FreshMart Grocery{% endblock %}
+
 {% block body_block %}
-<html lang="en">
-<head>
-    <title>{% block title %}Order Product | Grocery Store{% endblock %}</title>
-</head>
-<body>
-    <h1>Order Product</h1>
-    <div id="show">
-        <h1>Product:{{ product.name }}</h1>
-        <h1>Quantity:{{ cart_item.quantity }}</h1>
-        <h1>Total:{{ total }}</h1>
-    </div>
-    <div id="custmdetails">
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="item" value="{{ product.name }}">
-            <input type="hidden" name="price" value="{{ product.price }}">
-            <input type="hidden" name="quantity" value="{{ cart_item.quantity }}">
-            <input type="hidden" name="totalprice" value="{{ total }}">
-            <label for="cname">Name:</label>
-            <input type="text" name="cname" id="cname" required placeholder="Enter Full Name" autofocus> <br>
-        
-        
-            <label for="phno">Phone Number:</label>
-            <input type="text" name="phno" id="phno" required 
-       pattern="\d{10}" maxlength="10" 
-       placeholder="Phone Number"
-       title="Enter a 10-digit phone number">
-<br>
+<style>
+    :root {
+        --primary: #2ecc71;
+        --primary-dark: #27ae60;
+        --secondary: #3498db;
+        --light: #f8f9fa;
+        --dark: #2c3e50;
+        --gray: #95a5a6;
+        --danger: #e74c3c;
+        --warning: #f39c12;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --radius: 12px;
+    }
 
+    .checkout-header {
+        background: linear-gradient(135deg, var(--dark) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 2.5rem 0;
+        margin-bottom: 2rem;
+    }
+
+    .checkout-header .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .checkout-header h1 {
+        font-weight: 700;
+        font-size: 2rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .checkout-steps {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-weight: 500;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .step.active {
+        color: white;
+    }
+
+    .step-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    .step.active .step-number {
+        background: var(--primary);
+    }
+
+    .checkout-container {
+        padding: 2rem 0 4rem;
+    }
+
+    /* Checkout Layout */
+    .checkout-layout {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    /* Order Summary Card */
+    .order-summary-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        margin-bottom: 2rem;
+    }
+
+    .order-summary-title {
+        font-weight: 700;
+        color: var(--dark);
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .product-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+
+    .product-details {
+        flex: 1;
+    }
+
+    .product-name {
+        font-weight: 700;
+        color: var(--dark);
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-quantity {
+        color: var(--gray);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-price {
+        font-weight: 800;
+        color: var(--primary);
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .order-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .detail-label {
+        color: var(--gray);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .detail-value {
+        color: var(--dark);
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .total-amount {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid #e9ecef;
+    }
+
+    .total-label {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .total-price {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--primary);
+    }
+
+    /* Customer Details Form */
+    .customer-form-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+    }
+
+    .form-title {
+        font-weight: 700;
+        color: var(--dark);
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 0.95rem;
+    }
+
+    .form-label .required {
+        color: var(--danger);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: var(--dark);
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.25);
+    }
+
+    .form-control:read-only {
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+    }
+
+    .form-control::placeholder {
+        color: #adb5bd;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    /* Payment Summary */
+    .payment-summary {
+        background: white;
+        border-radius: var(--radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 2rem;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .summary-label {
+        color: var(--gray);
+        font-weight: 500;
+    }
+
+    .summary-value {
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin: 1.5rem 0;
+        padding-top: 1rem;
+        border-top: 2px solid #e9ecef;
+    }
+
+    .place-order-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 1rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .place-order-btn:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.3);
+    }
+
+    .security-note {
+        background: #e8f6ef;
+        color: var(--primary-dark);
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 1.5rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    /* Delivery Timeline */
+    .delivery-timeline {
+        background: white;
+        border-radius: var(--radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        margin-top: 2rem;
+    }
+
+    .timeline-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .timeline-icon {
+        width: 50px;
+        height: 50px;
+        background: #e8f6ef;
+        color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .timeline-content {
+        flex: 1;
+    }
+
+    .timeline-title {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.25rem;
+    }
+
+    .timeline-desc {
+        color: var(--gray);
+        font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .checkout-layout {
+            grid-template-columns: 1fr;
+        }
         
-            <label for="email">Email:</label>
-            <input type="email" name="email" id="email" required placeholder="grocery@gmail.com"><br>
-    
-            <label for="houseno">HouseNo:</label>
-            <input type="text" name="houseno" id="houseno" required placeholder="House No, Building Name"><br>
-    
-            <label for="roadno">Road No:</label>
-            <input type="text" name="roadno" id="roadno" required placeholder="Road No, Area, Colony"><br>
+        .payment-summary {
+            position: static;
+            margin-top: 2rem;
+        }
         
-            <label for="address">Address:</label>
-            <input type="text" name="address" id="address" required placeholder="Address"><br>
+        .checkout-header .container {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
         
-            <label for="pin">PIN Code:</label>
+        .checkout-steps {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .checkout-header {
+            padding: 2rem 0;
+        }
+        
+        .checkout-header h1 {
+            font-size: 1.75rem;
+        }
+        
+        .product-info {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .order-details {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .order-summary-card,
+        .customer-form-card,
+        .payment-summary,
+        .delivery-timeline {
+            padding: 1.5rem;
+        }
+        
+        .checkout-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .step-text {
+            display: none;
+        }
+        
+        .step-number {
+            width: 25px;
+            height: 25px;
+            font-size: 0.8rem;
+        }
+    }
+</style>
+
+<!-- Checkout Header -->
+<section class="checkout-header">
+    <div class="container">
+        <h1>
+            <i class="fas fa-clipboard-check"></i>
+            Complete Your Order
+        </h1>
+        <div class="checkout-steps">
+            <div class="step active">
+                <span class="step-number">1</span>
+                <span class="step-text">Cart</span>
+            </div>
+            <i class="fas fa-chevron-right text-muted"></i>
+            <div class="step active">
+                <span class="step-number">2</span>
+                <span class="step-text">Checkout</span>
+            </div>
+            <i class="fas fa-chevron-right text-muted"></i>
+            <div class="step">
+                <span class="step-number">3</span>
+                <span class="step-text">Payment</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="checkout-container">
+        <div class="checkout-layout">
+            <!-- Left Column: Order Summary & Form -->
+            <div>
+                <!-- Order Summary -->
+                <div class="order-summary-card">
+                    <h2 class="order-summary-title">
+                        <i class="fas fa-box"></i>
+                        Order Summary
+                    </h2>
+                    
+                    <div class="product-info">
+                        <img src="{% static product.image %}" alt="{{ product.name }}" class="product-image">
+                        <div class="product-details">
+                            <h3 class="product-name">{{ product.name }}</h3>
+                            <p class="product-quantity">Quantity: {{ cart_item.quantity }}</p>
+                            <p class="product-price">₹{{ total }}</p>
+                            <p class="text-muted mb-0">{{ product.description|truncatechars:100 }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Unit Price</span>
+                            <span class="detail-value">₹{{ product.price }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Quantity</span>
+                            <span class="detail-value">{{ cart_item.quantity }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Delivery</span>
+                            <span class="detail-value text-success">FREE</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Estimated Tax</span>
+                            <span class="detail-value">₹0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="total-amount">
+                        <span class="total-label">Total Amount</span>
+                        <span class="total-price">₹{{ total }}</span>
+                    </div>
+                </div>
+
+                <!-- Customer Details Form -->
+                <div class="customer-form-card">
+                    <h2 class="form-title">
+                        <i class="fas fa-user-circle"></i>
+                        Delivery Details
+                    </h2>
+                    
+                    <form method="post" id="orderForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="item" value="{{ product.name }}">
+                        <input type="hidden" name="price" value="{{ product.price }}">
+                        <input type="hidden" name="quantity" value="{{ cart_item.quantity }}">
+                        <input type="hidden" name="totalprice" value="{{ total }}">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cname" class="form-label">
+                                    Full Name <span class="required">*</span>
+                                </label>
+                                <input type="text" 
+                                       name="cname" 
+                                       id="cname" 
+                                       class="form-control"
+                                       required 
+                                       placeholder="Enter your full name"
+                                       autofocus>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email" class="form-label">
+                                    Email Address <span class="required">*</span>
+                                </label>
+                                <input type="email" 
+                                       name="email" 
+                                       id="email" 
+                                       class="form-control"
+                                       required 
+                                       placeholder="your@email.com">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phno" class="form-label">
+                                Phone Number <span class="required">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">+91</span>
+                                <input type="tel" 
+                                       name="phno" 
+                                       id="phno" 
+                                       class="form-control"
+                                       required 
+                                       pattern="\d{10}" 
+                                       maxlength="10"
+                                       placeholder="9876543210"
+                                       title="Enter a 10-digit phone number">
+                            </div>
+                        </div>
+                        
+                        <h4 class="mt-4 mb-3" style="color: var(--dark); font-weight: 600;">
+                            <i class="fas fa-map-marker-alt me-2"></i>Delivery Address
+                        </h4>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="houseno" class="form-label">
+                                    House/Building <span class="required">*</span>
+                                </label>
+                                <input type="text" 
+                                       name="houseno" 
+                                       id="houseno" 
+                                       class="form-control"
+                                       required 
+                                       placeholder="House No, Building Name">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="roadno" class="form-label">
+                                    Road/Area <span class="required">*</span>
+                                </label>
+                                <input type="text" 
+                                       name="roadno" 
+                                       id="roadno" 
+                                       class="form-control"
+                                       required 
+                                       placeholder="Road No, Area, Colony">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address" class="form-label">
+                                Complete Address <span class="required">*</span>
+                            </label>
+                            <input type="text" 
+                                   name="address" 
+                                   id="address" 
+                                   class="form-control"
+                                   required 
+                                   placeholder="Street, Landmark, etc.">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pin" class="form-label">
+                                    PIN Code <span class="required">*</span>
+                                </label>
+                                <input type="text" 
+                                       name="pin" 
+                                       id="pin" 
+                                       class="form-control"
+                                       required 
+                                       pattern="\d{6}" 
+                                       maxlength="6"
+                                       placeholder="560001">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="state" class="form-label">
+                                    State <span class="required">*</span>
+                                </label>
+                                <input type="text" 
+                                       name="state" 
+                                       id="state" 
+                                       class="form-control"
+                                       required 
+                                       placeholder="Enter your state">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="country" class="form-label">Country</label>
+                            <input type="text" 
+                                   name="country" 
+                                   id="country" 
+                                   class="form-control"
+                                   value="India" 
+                                   readonly>
+                        </div>
+                        
+                        <div class="form-group mt-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="saveAddress" name="saveAddress" checked>
+                                <label class="form-check-label" for="saveAddress">
+                                    Save this address for future orders
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="place-order-btn" id="submitBtn">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span id="btnText">Place Order & Proceed to Payment</span>
+                            <span id="btnSpinner" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i> Processing...
+                            </span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Delivery Timeline -->
+                <div class="delivery-timeline">
+                    <h3 class="form-title">
+                        <i class="fas fa-shipping-fast"></i>
+                        Delivery Timeline
+                    </h3>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h4 class="timeline-title">Order Confirmation</h4>
+                            <p class="timeline-desc">Immediate confirmation after payment</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h4 class="timeline-title">Order Processing</h4>
+                            <p class="timeline-desc">Items packed within 2 hours</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-icon">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h4 class="timeline-title">Out for Delivery</h4>
+                            <p class="timeline-desc">Delivery within 3-4 hours</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Payment Summary -->
+            <div>
+                <div class="payment-summary">
+                    <h2 class="form-title">
+                        <i class="fas fa-receipt"></i>
+                        Payment Summary
+                    </h2>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label">Items Total</span>
+                        <span class="summary-value">₹{{ product.price }}</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label">Quantity</span>
+                        <span class="summary-value">× {{ cart_item.quantity }}</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label">Subtotal</span>
+                        <span class="summary-value">₹{{ total }}</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label">Delivery Charges</span>
+                        <span class="summary-value text-success">FREE</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span class="summary-label">Taxes & Charges</span>
+                        <span class="summary-value">₹0</span>
+                    </div>
+                    
+                    <div class="summary-total">
+                        <span>Total Payable</span>
+                        <span class="total-price">₹{{ total }}</span>
+                    </div>
+                    
+                    <div class="security-note">
+                        <i class="fas fa-shield-alt"></i>
+                        Your payment information is secure and encrypted
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4 class="mb-3" style="color: var(--dark); font-weight: 600;">
+                            <i class="fas fa-credit-card me-2"></i>Payment Methods
+                        </h4>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-light text-dark p-2">
+                                <i class="fab fa-google-pay me-1"></i> Google Pay
+                            </span>
+                            <span class="badge bg-light text-dark p-2">
+                                <i class="fab fa-phonepe me-1"></i> PhonePe
+                            </span>
+                            <span class="badge bg-light text-dark p-2">
+                                <i class="fas fa-credit-card me-1"></i> Card
+                            </span>
+                            <span class="badge bg-light text-dark p-2">
+                                <i class="fas fa-university me-1"></i> UPI
+                            </span>
+                            <span class="badge bg-light text-dark p-2">
+                                <i class="fas fa-money-bill-wave me-1"></i> Cash on Delivery
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4 class="mb-3" style="color: var(--dark); font-weight: 600;">
+                            <i class="fas fa-info-circle me-2"></i>Important Notes
+                        </h4>
+                        <ul class="list-unstyled text-muted small">
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Free delivery on all orders</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> 100% quality guarantee</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Easy returns within 24 hours</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i> 24/7 customer support</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation and enhancement
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('orderForm');
+        const phoneInput = document.getElementById('phno');
+        const pinInput = document.getElementById('pin');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        
+        // Phone number validation
+        phoneInput.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
+        
+        // PIN code validation
+        pinInput.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').slice(0, 6);
+        });
+        
+        // Form submission handler
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
             
-
-            <input type="text" name="pin" id="pin" required 
-       pattern="\d{6}" maxlength="6" 
-       placeholder="Pin Code"
-       title="Enter Pin code">
-<br>
-
+            // Validate all required fields
+            const requiredFields = form.querySelectorAll('[required]');
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    showError(field, 'This field is required');
+                    isValid = false;
+                } else {
+                    clearError(field);
+                }
+            });
+            
+            // Validate phone number
+            if (!/^\d{10}$/.test(phoneInput.value)) {
+                showError(phoneInput, 'Please enter a valid 10-digit phone number');
+                isValid = false;
+            } else {
+                clearError(phoneInput);
+            }
+            
+            // Validate PIN code
+            if (!/^\d{6}$/.test(pinInput.value)) {
+                showError(pinInput, 'Please enter a valid 6-digit PIN code');
+                isValid = false;
+            } else {
+                clearError(pinInput);
+            }
+            
+            // Validate email
+            const emailInput = document.getElementById('email');
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(emailInput.value)) {
+                showError(emailInput, 'Please enter a valid email address');
+                isValid = false;
+            } else {
+                clearError(emailInput);
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                // Scroll to first error
+                const firstError = document.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } else {
+                // Show loading state
+                btnText.style.display = 'none';
+                btnSpinner.style.display = 'inline';
+                submitBtn.disabled = true;
+                
+                // Form will submit normally
+                return true;
+            }
+        });
         
-            <label for="state">State:</label>
-            <input type="text" name="state" id="state" required placeholder="State"><br>
+        // Error handling functions
+        function showError(input, message) {
+            clearError(input);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'invalid-feedback d-block';
+            errorDiv.textContent = message;
+            input.classList.add('is-invalid');
+            
+            // Check if input is in input-group
+            if (input.parentElement.classList.contains('input-group')) {
+                input.parentElement.parentNode.appendChild(errorDiv);
+            } else {
+                input.parentNode.appendChild(errorDiv);
+            }
+            
+            input.focus();
+        }
         
-            <label for="country">Country:</label>
-            <input type="text" name="country" id="country" value="India" readonly><br>
+        function clearError(input) {
+            input.classList.remove('is-invalid');
+            const parent = input.parentElement.classList.contains('input-group') ? 
+                          input.parentElement.parentNode : input.parentNode;
+            const errorDiv = parent.querySelector('.invalid-feedback');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
         
-            <a href="/success"> <button type="submit">Place Order</button></a>
-        </form>
-    </div>
+        // Auto-focus on name field if empty
+        const nameInput = document.getElementById('cname');
+        if (!nameInput.value.trim()) {
+            nameInput.focus();
+        }
+        
+        // Add real-time validation feedback
+        const inputs = form.querySelectorAll('input[required]');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                }
+            });
+            
+            // Remove error on input
+            input.addEventListener('input', function() {
+                if (this.classList.contains('is-invalid')) {
+                    clearError(this);
+                }
+            });
+        });
+    });
     
-</body>
-</html>
+    // Prevent form resubmission on page refresh
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+</script>
 {% endblock %}

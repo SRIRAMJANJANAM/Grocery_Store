@@ -1,19 +1,566 @@
-<!DOCTYPE html>
+{% extends 'shop/base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Success</title>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
-</head>
-<body>
-   <div id="success">
-    <h1>
-        Order Completed Successfully!
-    </h1>
-    <p>Thank you for your purchase. Your order has been placed successfully.</p>
-    <h2 ><a href="/home"title='Continue Shopping'>Continue Shopping.....</a> </h2>
-   </div>
-</body>
-</html>
+{% block title %}Order Confirmed | FreshMart Grocery{% endblock %}
+
+{% block body_block %}
+<style>
+    :root {
+        --primary: #2ecc71;
+        --primary-dark: #27ae60;
+        --secondary: #3498db;
+        --light: #f8f9fa;
+        --dark: #2c3e50;
+        --gray: #95a5a6;
+        --danger: #e74c3c;
+        --warning: #f39c12;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --radius: 12px;
+    }
+
+    .success-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .success-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 4rem 3rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 600px;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .success-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+
+    .success-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        animation: bounce 1s ease infinite alternate;
+    }
+
+    .success-icon i {
+        font-size: 3.5rem;
+        color: white;
+    }
+
+    @keyframes bounce {
+        from {
+            transform: translateY(0);
+        }
+        to {
+            transform: translateY(-10px);
+        }
+    }
+
+    .success-title {
+        font-weight: 800;
+        color: var(--dark);
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .success-subtitle {
+        color: var(--gray);
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .order-details {
+        background: #f8f9fa;
+        border-radius: var(--radius);
+        padding: 2rem;
+        margin: 2rem 0;
+        text-align: left;
+        border: 1px solid #e9ecef;
+    }
+
+    .order-details h3 {
+        color: var(--dark);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.3rem;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .detail-label {
+        color: var(--gray);
+        font-weight: 500;
+    }
+
+    .detail-value {
+        color: var(--dark);
+        font-weight: 600;
+    }
+
+    .highlight-value {
+        color: var(--primary);
+        font-weight: 700;
+    }
+
+    .confirmation-number {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: inline-block;
+        margin: 1rem 0;
+        letter-spacing: 1px;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 3rem;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        min-width: 200px;
+        justify-content: center;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--dark);
+        border: 2px solid #e9ecef;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        min-width: 200px;
+        justify-content: center;
+    }
+
+    .btn-secondary:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+    }
+
+    .delivery-info {
+        background: #e8f6ef;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-top: 2rem;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .delivery-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .delivery-content h4 {
+        color: var(--dark);
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .delivery-content p {
+        color: var(--gray);
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: var(--primary);
+        animation: confetti-fall 5s linear infinite;
+        opacity: 0;
+    }
+
+    @keyframes confetti-fall {
+        0% {
+            transform: translateY(-100px) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(800px) rotate(720deg);
+            opacity: 0;
+        }
+    }
+
+    /* Animation for success checkmark */
+    .checkmark {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: block;
+        stroke-width: 2;
+        stroke: white;
+        stroke-miterlimit: 10;
+        margin: 0 auto;
+        box-shadow: inset 0px 0px 0px var(--primary);
+        animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+    }
+
+    .checkmark__circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: var(--primary);
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .checkmark__check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+
+    @keyframes stroke {
+        100% {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @keyframes scale {
+        0%, 100% {
+            transform: none;
+        }
+        50% {
+            transform: scale3d(1.1, 1.1, 1);
+        }
+    }
+
+    @keyframes fill {
+        100% {
+            box-shadow: inset 0px 0px 0px 80px var(--primary);
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .success-card {
+            padding: 3rem 2rem;
+            margin: 1rem;
+        }
+        
+        .success-title {
+            font-size: 2rem;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .success-icon i {
+            font-size: 2.5rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .btn-primary,
+        .btn-secondary {
+            min-width: auto;
+            width: 100%;
+        }
+        
+        .order-details {
+            padding: 1.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .success-container {
+            padding: 1rem;
+        }
+        
+        .success-card {
+            padding: 2rem 1.5rem;
+        }
+        
+        .success-title {
+            font-size: 1.75rem;
+        }
+        
+        .detail-row {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .delivery-info {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="success-container">
+    <div class="success-card">
+        <!-- Animated Checkmark -->
+        <div class="success-icon">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        
+        <h1 class="success-title">Order Confirmed!</h1>
+        
+        <div class="confirmation-number">
+            Order #{{ order_id|default:"ORD" }}{{ random_order_number|default:"123456" }}
+        </div>
+        
+        <p class="success-subtitle">
+            Thank you for your purchase! Your order has been successfully placed and is being processed.
+        </p>
+        
+        <!-- Order Details -->
+        <div class="order-details">
+            <h3><i class="fas fa-receipt"></i> Order Summary</h3>
+            
+            <div class="detail-row">
+                <span class="detail-label">Order Number</span>
+                <span class="detail-value">#{{ order_id|default:"ORD" }}{{ random_order_number|default:"123456" }}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Order Date</span>
+                <span class="detail-value">{{ order_date|default:"Today" }}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Payment Method</span>
+                <span class="detail-value">{{ payment_method|default:"Cash on Delivery" }}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Total Amount</span>
+                <span class="detail-value highlight-value">₹{{ total_amount|default:"299" }}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Estimated Delivery</span>
+                <span class="detail-value">{{ delivery_date|default:"Within 3-4 hours" }}</span>
+            </div>
+        </div>
+        
+        <!-- Delivery Information -->
+        <div class="delivery-info">
+            <div class="delivery-icon">
+                <i class="fas fa-shipping-fast"></i>
+            </div>
+            <div class="delivery-content">
+                <h4>Delivery Update</h4>
+                <p>You will receive a confirmation email with tracking details shortly. Our delivery executive will contact you before arrival.</p>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="/home" class="btn-primary">
+                <i class="fas fa-store"></i>
+                Continue Shopping
+            </a>
+            
+            <!-- <a href="/logs" class="btn-secondary">
+                <i class="fas fa-history"></i>
+                View Order History
+            </a> -->
+            
+            <a href="/" class="btn-secondary">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+        </div>
+        
+        <p class="text-muted mt-4 mb-0 small">
+            Need help? <a href="/contact" class="text-primary">Contact our support team</a> or call +91 9876543210
+        </p>
+    </div>
+</div>
+
+<script>
+    // Create confetti effect
+    function createConfetti() {
+        const colors = ['#2ecc71', '#3498db', '#f39c12', '#e74c3c', '#9b59b6'];
+        const card = document.querySelector('.success-card');
+        
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.width = Math.random() * 10 + 5 + 'px';
+            confetti.style.height = confetti.style.width;
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 5 + 's';
+            card.appendChild(confetti);
+        }
+    }
+    
+    // Create confetti after page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        createConfetti();
+        
+        // Simulate loading order details
+        const orderDetails = {
+            orderId: 'ORD' + Math.floor(Math.random() * 1000000),
+            date: new Date().toLocaleDateString('en-IN', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }),
+            delivery: new Date(Date.now() + 4 * 60 * 60 * 1000).toLocaleTimeString('en-IN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+        };
+        
+        // Update order details if not provided by backend
+        const orderNumber = document.querySelector('.confirmation-number');
+        const orderRows = document.querySelectorAll('.detail-row .detail-value');
+        
+        if (orderNumber && orderNumber.textContent.includes('123456')) {
+            orderNumber.textContent = `Order #${orderDetails.orderId}`;
+        }
+        
+        if (orderRows.length >= 2) {
+            // Update order number
+            if (orderRows[0].textContent.includes('123456')) {
+                orderRows[0].textContent = `#${orderDetails.orderId}`;
+            }
+            // Update order date
+            if (orderRows[1].textContent === 'Today') {
+                orderRows[1].textContent = orderDetails.date;
+            }
+            // Update delivery time
+            if (orderRows[4] && orderRows[4].textContent === 'Within 3-4 hours') {
+                orderRows[4].textContent = `Today by ${orderDetails.delivery}`;
+            }
+        }
+        
+        // Add celebration animation
+        setTimeout(() => {
+            const successIcon = document.querySelector('.success-icon');
+            successIcon.style.animation = 'none';
+            void successIcon.offsetWidth; // Trigger reflow
+            successIcon.style.animation = 'bounce 1s ease infinite alternate';
+        }, 1000);
+    });
+    
+    // Smooth page entrance
+    document.body.style.opacity = '0';
+    window.addEventListener('load', function() {
+        document.body.style.transition = 'opacity 0.5s ease';
+        document.body.style.opacity = '1';
+    });
+</script>
+
+<!-- Email notification simulation -->
+<div style="display: none;">
+    <div id="email-notification" class="alert alert-success position-fixed" style="bottom: 20px; right: 20px; z-index: 9999; max-width: 300px;">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-envelope me-2"></i>
+            <div>
+                <strong>Order confirmation sent!</strong>
+                <p class="mb-0 small">Check your email for order details.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show email notification after delay
+    setTimeout(() => {
+        const notification = document.getElementById('email-notification');
+        if (notification) {
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+    }, 2000);
+</script>
+{% endblock %}

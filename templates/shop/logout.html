@@ -1,30 +1,542 @@
-<!DOCTYPE html>
 {% extends 'shop/base.html' %}
-{% block body_block%}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Logout | Grocery Store{% endblock %}</title>
-    <style>
-        h1{
-            color: blue;
-            margin-top: 0.6vw;
+{% load static %}
+{% block title %}Signed Out | FreshMart Grocery{% endblock %}
+
+{% block body_block %}
+<style>
+    :root {
+        --primary: #2ecc71;
+        --primary-dark: #27ae60;
+        --secondary: #3498db;
+        --light: #f8f9fa;
+        --dark: #2c3e50;
+        --gray: #95a5a6;
+        --danger: #e74c3c;
+        --warning: #f39c12;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --radius: 12px;
+    }
+
+    .logout-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .logout-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%232ecc71" fill-opacity="0.05" d="M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,202.7C672,224,768,224,864,208C960,192,1056,160,1152,144C1248,128,1344,128,1392,128L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        background-size: cover;
+        background-position: bottom;
+    }
+
+    .logout-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 4rem 3rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 600px;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
         }
-        p,h2{
-            color: red;
+        to {
+            opacity: 1;
+            transform: scale(1);
         }
-        div{
-            text-align: center;
+    }
+
+    .logout-icon {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        border: 3px solid var(--primary);
+        position: relative;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.2);
         }
-    </style>
-</head>
-<body>
+        70% {
+            box-shadow: 0 0 0 20px rgba(46, 204, 113, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+        }
+    }
+
+    .logout-icon i {
+        font-size: 3.5rem;
+        color: var(--primary);
+    }
+
+    .logout-title {
+        font-weight: 800;
+        color: var(--dark);
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .logout-message {
+        color: var(--gray);
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .goodbye-message {
+        background: #e8f6ef;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin: 2rem 0;
+        color: var(--primary-dark);
+        font-weight: 500;
+        font-size: 1.1rem;
+        border-left: 4px solid var(--primary);
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 3rem;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        min-width: 200px;
+        justify-content: center;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--dark);
+        border: 2px solid #e9ecef;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        min-width: 200px;
+        justify-content: center;
+    }
+
+    .btn-secondary:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1.5rem;
+        margin: 2.5rem 0;
+        padding: 2rem;
+        background: #f8f9fa;
+        border-radius: var(--radius);
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--gray);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .visit-again {
+        margin-top: 2rem;
+        color: var(--dark);
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .visit-again i {
+        color: var(--primary);
+        margin-right: 0.5rem;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-5px);
+        }
+    }
+
+    /* Confetti effect */
+    .confetti {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: var(--primary);
+        animation: confetti-fall 3s linear forwards;
+        opacity: 0;
+        border-radius: 50%;
+    }
+
+    @keyframes confetti-fall {
+        0% {
+            transform: translateY(-100px) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(800px) rotate(360deg);
+            opacity: 0;
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .logout-card {
+            padding: 3rem 2rem;
+            margin: 1rem;
+        }
+        
+        .logout-title {
+            font-size: 2rem;
+        }
+        
+        .logout-icon {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .logout-icon i {
+            font-size: 2.5rem;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .btn-primary,
+        .btn-secondary {
+            min-width: auto;
+            width: 100%;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            padding: 1.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .logout-container {
+            padding: 1rem;
+        }
+        
+        .logout-card {
+            padding: 2rem 1.5rem;
+        }
+        
+        .logout-title {
+            font-size: 1.75rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Wave animation */
+    .wave {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="%232ecc71" fill-opacity="0.1"></path></svg>');
+        background-size: 1200px 100px;
+        animation: wave 12s linear infinite;
+    }
+
+    .wave:nth-child(2) {
+        bottom: 10px;
+        animation: wave 10s linear infinite;
+        opacity: 0.5;
+    }
+
+    @keyframes wave {
+        0% {
+            background-position-x: 0;
+        }
+        100% {
+            background-position-x: 1200px;
+        }
+    }
+</style>
+
+<div class="logout-container">
+    <!-- Animated Waves -->
+    <div class="wave"></div>
+    <div class="wave"></div>
     
-    <div><h1>Thanks for using Grocery Store</h1>
-        <p>Anyway we are feeling very sad b'z you logout</p>
-        <h2>Please login again to enjoy......</h2>
-        <a href="/accounts/login" class="btn btn-success">Login</a></div>
-    {%endblock%}
-</body>
-</html>
+    <div class="logout-card">
+        <!-- <div class="logout-icon">
+            <i class="fas fa-hand-wave"></i>
+        </div>
+        
+        <h1 class="logout-title">You've Been Signed Out</h1> -->
+        
+        <p class="logout-message">
+            Thank you for shopping with FreshMart Grocery. We appreciate your visit!
+        </p>
+        
+        <div class="goodbye-message">
+            <i class="fas fa-heart me-2"></i>
+            We'll miss having you here! Hope to see you back soon for more fresh groceries.
+        </div>
+        
+        <!-- User Statistics (Could be dynamic) -->
+        <!-- <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-value">{{ order_count|default:"15" }}</span>
+                <span class="stat-label">Orders Placed</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">₹{{ total_spent|default:"4,299" }}</span>
+                <span class="stat-label">Total Spent</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ visit_count|default:"28" }}</span>
+                <span class="stat-label">Store Visits</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ days_since_join|default:"45" }}</span>
+                <span class="stat-label">Days With Us</span>
+            </div>
+        </div> -->
+        
+        <div class="action-buttons">
+            <a href="/accounts/login" class="btn-primary">
+                <i class="fas fa-sign-in-alt"></i>
+                Sign In Again
+            </a>
+            
+            <a href="/" class="btn-secondary">
+                <i class="fas fa-home"></i>
+                Back to Home
+            </a>
+            
+            <a href="/signup" class="btn-secondary">
+                <i class="fas fa-user-plus"></i>
+                Create New Account
+            </a>
+        </div>
+        
+        <div class="visit-again">
+            <i class="fas fa-shopping-cart"></i>
+            Come back soon for fresh deals and offers!
+        </div>
+        
+        <p class="text-muted mt-4 mb-0 small">
+            Your session has been securely closed. All personal data is safe.
+        </p>
+    </div>
+</div>
+
+<script>
+    // Create confetti effect
+    function createConfetti() {
+        const colors = ['#2ecc71', '#3498db', '#f39c12', '#e74c3c', '#9b59b6'];
+        const container = document.querySelector('.logout-container');
+        
+        for (let i = 0; i < 30; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.width = Math.random() * 8 + 4 + 'px';
+            confetti.style.height = confetti.style.width;
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 3 + 's';
+            container.appendChild(confetti);
+        }
+    }
+    
+    // Create confetti after page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        createConfetti();
+        
+        // Animate stats counter
+        const statValues = document.querySelectorAll('.stat-value');
+        statValues.forEach(stat => {
+            const originalText = stat.textContent;
+            const isNumber = /^[\d,₹]+$/.test(originalText);
+            
+            if (isNumber) {
+                const num = parseInt(originalText.replace(/[₹,]/g, '')) || 0;
+                let counter = 0;
+                const increment = Math.ceil(num / 30);
+                
+                const timer = setInterval(() => {
+                    counter += increment;
+                    if (counter >= num) {
+                        counter = num;
+                        clearInterval(timer);
+                    }
+                    
+                    // Format number with commas if needed
+                    let display = counter;
+                    if (originalText.includes('₹')) {
+                        display = '₹' + counter.toLocaleString();
+                    } else if (counter >= 1000) {
+                        display = counter.toLocaleString();
+                    }
+                    
+                    stat.textContent = display;
+                }, 50);
+            }
+        });
+        
+        // Add hover effect to logout icon
+        const logoutIcon = document.querySelector('.logout-icon');
+        logoutIcon.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+        
+        logoutIcon.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+    
+    // Smooth page entrance
+    document.body.style.opacity = '0';
+    window.addEventListener('load', function() {
+        document.body.style.transition = 'opacity 0.5s ease';
+        document.body.style.opacity = '1';
+    });
+    
+    // Auto-redirect after delay
+    setTimeout(() => {
+        const countdown = document.createElement('div');
+        countdown.className = 'alert alert-info position-fixed';
+        countdown.style.bottom = '20px';
+        countdown.style.right = '20px';
+        countdown.style.zIndex = '9999';
+        countdown.innerHTML = '<i class="fas fa-clock me-2"></i> Redirecting to home in <span id="countdown">10</span> seconds...';
+        document.body.appendChild(countdown);
+        
+        let seconds = 10;
+        const countdownElement = document.getElementById('countdown');
+        const countdownInterval = setInterval(() => {
+            seconds--;
+            countdownElement.textContent = seconds;
+            
+            if (seconds <= 0) {
+                clearInterval(countdownInterval);
+                window.location.href = '/';
+            }
+        }, 1000);
+        
+        // Remove countdown after 10 seconds
+        setTimeout(() => {
+            countdown.remove();
+        }, 10000);
+    }, 3000);
+</script>
+
+<!-- Security notification -->
+<div id="security-notification" class="alert alert-success position-fixed" style="bottom: 80px; right: 20px; z-index: 9999; max-width: 300px; display: none;">
+    <div class="d-flex align-items-center">
+        <i class="fas fa-shield-alt me-2"></i>
+        <div>
+            <strong>Session Secured!</strong>
+            <p class="mb-0 small">Your account has been safely logged out.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show security notification
+    setTimeout(() => {
+        const notification = document.getElementById('security-notification');
+        if (notification) {
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+    }, 1000);
+</script>
+{% endblock %}
