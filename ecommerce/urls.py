@@ -1,4 +1,3 @@
-```python
 """
 URL configuration for ecommerce project.
 """
@@ -39,4 +38,3 @@ urlpatterns = [
 
 # Serve media files (images)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-```
