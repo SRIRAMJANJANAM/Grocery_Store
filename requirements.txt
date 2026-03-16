@@ -2,3 +2,4 @@ Django==5.2.4
 gunicorn
 whitenoise
 djangorestframework
+razorpay
