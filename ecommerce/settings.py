@@ -157,6 +157,3 @@ PASSWORD_HASHERS = [
 ]
 
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://9db9-2409-4091-8055-dc15-7c52-5de0-bb96-c25.ngrok-free.app",
-]
