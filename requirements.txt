@@ -3,3 +3,4 @@ gunicorn
 whitenoise
 djangorestframework
 razorpay
+argon2-cffi
