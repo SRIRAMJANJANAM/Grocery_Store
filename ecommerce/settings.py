@@ -23,10 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=zyxekxs*87u2tmiwj#x(l&!5dh$yfhov54z$0ebvqj&12#*vg'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    "grocery-store-74v3.onrender.com",
+    ".onrender.com",
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://grocery-store-74v3.onrender.com",
+]
 
 # Application definition
 
