@@ -1,4 +1,3 @@
-```python
 """
 Django settings for ecommerce project.
 """
@@ -151,8 +150,6 @@ PASSWORD_HASHERS = [
 
 # DEFAULT PK
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-```
-
 
 # Razorpay Configuration
 RAZORPAY_KEY_ID = 'rzp_live_SRu7Tc3XH6E9SE'  # Replace with your actual Razorpay Key ID
